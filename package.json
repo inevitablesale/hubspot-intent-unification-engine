@@ -28,11 +28,13 @@
     "@hubspot/api-client": "^13.4.0",
     "axios": "^1.13.2",
     "dotenv": "^17.2.3",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.2.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
     "@types/express": "^5.0.5",
+    "@types/express-rate-limit": "^5.1.3",
     "@types/jest": "^30.0.0",
     "@types/node": "^24.10.1",
     "@types/supertest": "^6.0.3",

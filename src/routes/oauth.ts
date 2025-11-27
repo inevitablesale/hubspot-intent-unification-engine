@@ -1,4 +1,5 @@
 import { Router, Request, Response } from 'express';
+import rateLimit from 'express-rate-limit';
 import {
   getAuthorizationUrl,
   exchangeCodeForTokens,
@@ -7,6 +8,21 @@ import {
 } from '../services/hubspotService';
 
 const router = Router();
+
+/**
+ * Rate limiter for sensitive OAuth operations
+ * Limits to 10 requests per 15 minutes per IP
+ */
+const oauthRateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10,
+  message: {
+    error: 'Too many requests',
+    message: 'Rate limit exceeded. Please try again later.',
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 /**
  * GET /oauth/authorize
@@ -28,8 +44,9 @@ router.get('/authorize', (_req: Request, res: Response) => {
 /**
  * GET /oauth/callback
  * Handle OAuth callback from HubSpot
+ * Rate limited to prevent abuse
  */
-router.get('/callback', async (req: Request, res: Response) => {
+router.get('/callback', oauthRateLimiter, async (req: Request, res: Response) => {
   const { code, error, error_description } = req.query;
 
   if (error) {
@@ -64,8 +81,9 @@ router.get('/callback', async (req: Request, res: Response) => {
 /**
  * GET /oauth/status/:portalId
  * Check authentication status for a portal
+ * Rate limited to prevent enumeration attacks
  */
-router.get('/status/:portalId', (req: Request, res: Response) => {
+router.get('/status/:portalId', oauthRateLimiter, (req: Request, res: Response) => {
   const { portalId } = req.params;
   const authenticated = isAuthenticated(portalId);
   
@@ -78,8 +96,9 @@ router.get('/status/:portalId', (req: Request, res: Response) => {
 /**
  * DELETE /oauth/revoke/:portalId
  * Revoke tokens for a portal
+ * Rate limited to prevent abuse
  */
-router.delete('/revoke/:portalId', async (req: Request, res: Response) => {
+router.delete('/revoke/:portalId', oauthRateLimiter, async (req: Request, res: Response) => {
   const { portalId } = req.params;
   
   try {
