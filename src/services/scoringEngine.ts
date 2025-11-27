@@ -21,11 +21,18 @@ export interface ScoringConfig {
   spikeThresholdPercent: number;
 }
 
+/**
+ * Default scoring configuration:
+ * - apolloWeight (0.5): Weight for Apollo signals in unified score calculation
+ * - zoomInfoWeight (0.5): Weight for ZoomInfo signals in unified score calculation  
+ * - decayDays (30): Number of days over which signal strength decays to zero
+ * - spikeThresholdPercent (25): Minimum percentage increase to trigger awareness spike
+ */
 const defaultConfig: ScoringConfig = {
-  apolloWeight: 0.5,
-  zoomInfoWeight: 0.5,
-  decayDays: 30,
-  spikeThresholdPercent: 25,
+  apolloWeight: parseFloat(process.env.SCORING_APOLLO_WEIGHT || '0.5'),
+  zoomInfoWeight: parseFloat(process.env.SCORING_ZOOMINFO_WEIGHT || '0.5'),
+  decayDays: parseInt(process.env.SCORING_DECAY_DAYS || '30', 10),
+  spikeThresholdPercent: parseInt(process.env.SCORING_SPIKE_THRESHOLD || '25', 10),
 };
 
 /**

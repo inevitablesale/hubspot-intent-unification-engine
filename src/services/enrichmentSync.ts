@@ -6,9 +6,9 @@ import { EnrichmentData, EnrichmentDelta, FieldChange } from '../models/types';
 const enrichmentStore: Map<string, EnrichmentData> = new Map();
 
 /**
- * Fields to track for enrichment
+ * Company-specific fields to track for enrichment changes
  */
-const trackableFields = [
+const companyTrackableFields = [
   'employeeCount',
   'annualRevenue',
   'industry',
@@ -25,10 +25,23 @@ const trackableFields = [
   'technologies',
   'fundingTotal',
   'lastFundingDate',
+];
+
+/**
+ * Contact-specific fields to track for enrichment changes
+ */
+const contactTrackableFields = [
   'title',
   'department',
   'seniority',
+  'phone',
+  'linkedinUrl',
 ];
+
+/**
+ * All trackable fields for enrichment (union of company and contact fields)
+ */
+const trackableFields = [...new Set([...companyTrackableFields, ...contactTrackableFields])];
 
 /**
  * Generate a unique key for enrichment data

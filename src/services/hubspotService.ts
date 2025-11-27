@@ -7,13 +7,24 @@ import { OAuthTokens, AwarenessSpike, UnifiedIntentScore } from '../models/types
 const tokenStore: Map<string, OAuthTokens> = new Map();
 
 /**
+ * Default HubSpot OAuth scopes required for the app
+ */
+const DEFAULT_HUBSPOT_SCOPES = [
+  'crm.objects.contacts.read',
+  'crm.objects.contacts.write',
+  'crm.objects.companies.read',
+  'crm.objects.companies.write',
+  'timeline',
+].join(' ');
+
+/**
  * Get HubSpot OAuth configuration
  */
 export function getOAuthConfig() {
   const clientId = process.env.HUBSPOT_CLIENT_ID;
   const clientSecret = process.env.HUBSPOT_CLIENT_SECRET;
   const redirectUri = process.env.HUBSPOT_REDIRECT_URI;
-  const scopes = process.env.HUBSPOT_SCOPES || 'crm.objects.contacts.read crm.objects.contacts.write crm.objects.companies.read crm.objects.companies.write timeline';
+  const scopes = process.env.HUBSPOT_SCOPES || DEFAULT_HUBSPOT_SCOPES;
 
   if (!clientId || !clientSecret || !redirectUri) {
     throw new Error('Missing HubSpot OAuth configuration. Check environment variables.');

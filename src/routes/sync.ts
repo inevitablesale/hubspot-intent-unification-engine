@@ -18,6 +18,13 @@ import {
 const router = Router();
 
 /**
+ * Timeline event template ID for awareness spike events.
+ * This should be configured in your HubSpot app settings.
+ * Set via HUBSPOT_TIMELINE_EVENT_TEMPLATE_ID environment variable.
+ */
+const TIMELINE_EVENT_TEMPLATE_ID = process.env.HUBSPOT_TIMELINE_EVENT_TEMPLATE_ID || 'awareness_spike_template';
+
+/**
  * POST /sync/apollo/intent
  * Receive intent signals from Apollo
  */
@@ -55,8 +62,7 @@ router.post('/apollo/intent', async (req: Request, res: Response) => {
     if (portalId && spikes.length > 0) {
       for (const spike of spikes) {
         try {
-          // Note: timelineEventTemplateId would need to be configured
-          await createAwarenessSpikeEvent(portalId, spike, 'awareness_spike_template');
+          await createAwarenessSpikeEvent(portalId, spike, TIMELINE_EVENT_TEMPLATE_ID);
         } catch (error) {
           console.error('Error creating timeline event:', error);
         }
@@ -129,7 +135,7 @@ router.post('/zoominfo/intent', async (req: Request, res: Response) => {
     if (portalId && spikes.length > 0) {
       for (const spike of spikes) {
         try {
-          await createAwarenessSpikeEvent(portalId, spike, 'awareness_spike_template');
+          await createAwarenessSpikeEvent(portalId, spike, TIMELINE_EVENT_TEMPLATE_ID);
         } catch (error) {
           console.error('Error creating timeline event:', error);
         }
